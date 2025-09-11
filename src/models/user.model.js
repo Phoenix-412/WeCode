@@ -38,9 +38,6 @@ const userSchema= Schema({
     password:{
         type: String,
         required: [true, 'Password is required']    //'Password is required'->custom error message
-    },
-    refreshToken:{
-        type: String
     }
 },
 {

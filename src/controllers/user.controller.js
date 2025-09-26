@@ -5,6 +5,7 @@ const apiResponse= require('../utils/apiResponse')
 const validate= require('../utils/validate')
 const bcrypt= require('bcrypt')
 const jwt= require('jsonwebtoken')
+const redisClient = require('../db/redis')
 
 const generateAccessToken= (userId, email)=>{
     const accessToken= jwt.sign(
@@ -30,7 +31,7 @@ const register= asyncHandler(async (req,res)=>{
     const user= await User.create({
         firstname,
         lastname: lastname || '',
-        age: age || '',
+        age: age || null,
         email,
         password: hashPassword
     })
@@ -103,7 +104,21 @@ const login= asyncHandler(async (req, res)=>{
             )
 })
 
+const logout= asyncHandler(async (req, res)=>{
+    const token= req.cookies?.accessToken
+
+    const payload= jwt.decode(token)
+
+    await redisClient.set(`token:${token}`, 'Blocked')
+    await redisClient.expireAt(`token:${token}`, payload.exp)
+
+    res.status(200)
+        .cookie('accessToken', null, {expires: new Date(Date.now())})
+        .json(new apiResponse(200, {}, 'User Logged Out'))
+})
+
 module.exports= {
                     register,
                     login,
+                    logout,
                 }

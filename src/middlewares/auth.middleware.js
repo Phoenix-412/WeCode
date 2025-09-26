@@ -2,6 +2,7 @@ const User = require("../models/user.model");
 const apiError = require("../utils/apiError");
 const asyncHandler = require("../utils/asyncHandler");
 const jwt= require('jsonwebtoken')
+const redisClient= require('../db/redis')
 
 const verifyJWT= asyncHandler(async (req, _, next)=>{
     const token= req.cookies?.accessToken || req.header('Authorization')?.replace('Bearer ', '')
@@ -17,6 +18,13 @@ const verifyJWT= asyncHandler(async (req, _, next)=>{
     if(!user)
     {
         throw new apiError(401, 'Invalid Access token')
+    }
+
+    //check if the token is present in redis or not
+    const isBlocked= await redisClient.exists(`token:${token}`)
+    if(isBlocked)
+    {
+        throw new apiError(401, 'Invalid token')
     }
 
     req.user= user

@@ -15,7 +15,7 @@ const userSchema= Schema({
     },
     email:{
         type: String,
-        required: route,
+        required: true,
         unique: true,
         lowercase: true,
         trim: true,

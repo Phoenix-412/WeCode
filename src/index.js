@@ -1,13 +1,16 @@
 require('dotenv').config()
 const app= require('./app')
-const connectDB= require('./db/index')
+const connectDB= require('./db/index');
+const redisClient = require('./db/redis');
 
-connectDB()
+
+Promise.all([connectDB(), redisClient.connect()])
 .then(()=>{
-    app.listen(process.env.PORT || 3000, ()=>{
-        console.log(`Server running on address http://localhost:${process.env.PORT}`);
+    const PORT= process.env.PORT || 3000
+    app.listen(PORT, ()=>{
+        console.log(`Server running on address http://localhost:${PORT}`);
     })
 })
 .catch((err)=>{
-    console.log('MONGODB connection failed!!! ',err);
+    console.log('MONGODB or REDIS connection failed!!! ',err);
 });

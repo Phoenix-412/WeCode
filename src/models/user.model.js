@@ -10,7 +10,6 @@ const userSchema= Schema({
     },
     lastname:{
         type: String,
-        minLength: 3,
         maxLength: 20
     },
     email:{

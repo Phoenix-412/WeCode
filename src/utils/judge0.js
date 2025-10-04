@@ -21,7 +21,6 @@ const submitBatch= async (submissions)=>{
         },
         headers: {
             'x-rapidapi-key': 'd0cde6457emshb214d516557aa12p1c2baajsn95f1f562f6b9',
-            'x-rapidapi-host': 'judge0-ce.p.rapidapi.com',
             'Content-Type': 'application/json'
         },
         data: {
@@ -61,8 +60,7 @@ const submitToken= async(resultToken)=>{
             fields: '*'
         },
         headers: {
-            'x-rapidapi-key': 'd0cde6457emshb214d516557aa12p1c2baajsn95f1f562f6b9',
-            'x-rapidapi-host': 'judge0-ce.p.rapidapi.com'
+            'x-rapidapi-key': 'd0cde6457emshb214d516557aa12p1c2baajsn95f1f562f6b9'
         }
     };
 

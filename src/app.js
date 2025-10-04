@@ -16,9 +16,11 @@ app.use(cookieParser())
 //routes import
 const userRouter= require('./routes/user.routes')
 const problemRouter= require('./routes/problem.routes')
+const submissionRouter= require('./routes/submission.routes')
 
 //routes declaration
 app.use('/api/v1/user', userRouter)
 app.use('/api/v1/problem', problemRouter)
+app.use('/api/v1/submit', submissionRouter)
 
 module.exports= app

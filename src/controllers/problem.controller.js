@@ -139,7 +139,7 @@ const fetchProblem= asyncHandler(async (req, res)=>{
         throw new apiError(400, 'Id is required')
     }
 
-    const problem= await Problem.findById(problemId)
+    const problem= await Problem.findById(problemId).select('-hiddenTestCases -referenceSolution -creator')
     if(!problem)
     {
         throw new apiError(404, 'Problem not found')
@@ -150,7 +150,7 @@ const fetchProblem= asyncHandler(async (req, res)=>{
 })
 
 const fetchAllProblem= asyncHandler(async (req, res)=>{
-    const allProblems= await Problem.find({})
+    const allProblems= await Problem.find({}).select('_id title difficulty tags')
     if(!allProblems.length===0)
     {
         throw new apiError(404, 'Problems not found')

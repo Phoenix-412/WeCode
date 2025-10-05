@@ -21,6 +21,6 @@ const submissionRouter= require('./routes/submission.routes')
 //routes declaration
 app.use('/api/v1/user', userRouter)
 app.use('/api/v1/problem', problemRouter)
-app.use('/api/v1/submit', submissionRouter)
+app.use('/api/v1/submission', submissionRouter)
 
 module.exports= app

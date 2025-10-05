@@ -3,6 +3,7 @@ const apiError= require('../utils/apiError')
 const apiResponse= require('../utils/apiResponse')
 const {getLanguageId, submitBatch, submitToken} = require('../utils/judge0')
 const Problem = require('../models/problem.model')
+const User = require('../models/user.model')
 
 const createProblem= asyncHandler(async (req, res)=>{
     const {title, description, difficulty, tags, visibleTestCases, hiddenTestCases, startCode, referenceSolution}= req.body
@@ -160,10 +161,29 @@ const fetchAllProblem= asyncHandler(async (req, res)=>{
               .json(new apiResponse(200, allProblems, 'All problems fetched successfully'))
 })
 
+const solvedProblem= asyncHandler(async (req, res)=>{
+    
+    const count= req.user.problemSolved.length
+
+    const problems= await User.findById(req.user._id).populate({
+        path: 'problemSolved',
+        select: '_id title difficulty tags'
+    })
+
+    return res.status(200)
+              .json(new apiResponse(200,
+                {
+                    count,
+                    problemSolved: problems.problemSolved
+                },
+                    'Number of problems solved fetched successfully'))
+})
+
 module.exports= {
                     createProblem,
                     updateProblem,
                     deleteProblem,
                     fetchProblem,
                     fetchAllProblem,
+                    solvedProblem
                 }

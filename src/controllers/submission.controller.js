@@ -85,10 +85,54 @@ const submitCode= asyncHandler(async (req, res)=>{
 
     await submittedResult.save()
 
+    if(!req.user.problemSolved.includes(problemId) && submittedResult.status==='accepted')
+    {
+        req.user.problemSolved.push(problemId)
+        await req.user.save()
+    }
+
     return res.status(201)
               .json(new apiResponse(201, submittedResult, 'Code submitted successfully'))
 })
 
+const runCode= asyncHandler(async (req, res)=>{
+    const { problemId }= req.params
+
+    const { code, language }= req.body
+
+    if(!code || !language || [code, language].some( (field)=> field.trim()===''))
+    {
+        throw new apiError(400, 'All fields are required')
+    }
+
+    const problem= await Problem.findById(problemId)
+    if(!problem)
+    {
+        throw new apiError(404, 'Problem not found')
+    }
+
+    const language_id= getLanguageId(language)
+
+    const submissions= problem.visibleTestCases.map((testcase)=>(
+        {
+            language_id,
+            source_code: code,
+            stdin: testcase.input,
+            expected_output: testcase.output
+        }
+    ))
+
+    const submitResult= await submitBatch(submissions)
+
+    const resultToken= submitResult.map((value)=> value.token)
+
+    const result= await submitToken(resultToken)
+
+    return res.status(201)
+              .json(new apiResponse(201, result, 'Code ran successfully'))
+})
+
 module.exports= {
                     submitCode,
+                    runCode
                 }

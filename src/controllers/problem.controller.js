@@ -4,6 +4,7 @@ const apiResponse= require('../utils/apiResponse')
 const {getLanguageId, submitBatch, submitToken} = require('../utils/judge0')
 const Problem = require('../models/problem.model')
 const User = require('../models/user.model')
+const Submission = require('../models/submission.model')
 
 const createProblem= asyncHandler(async (req, res)=>{
     const {title, description, difficulty, tags, visibleTestCases, hiddenTestCases, startCode, referenceSolution}= req.body
@@ -179,11 +180,28 @@ const solvedProblem= asyncHandler(async (req, res)=>{
                     'Number of problems solved fetched successfully'))
 })
 
+const getSubmissions= asyncHandler(async (req, res)=>{
+    const userId= req.user._id
+
+    const {problemId}= req.params
+
+    const ans= await Submission.find({userId, problemId})
+    if(ans.length===0)
+    {
+        return res.status(200)
+                  .json(new apiResponse(200, ans, 'No submissions found'))
+    }
+
+    return res.status(200)
+              .json(new apiResponse(200, ans, 'Submissions fetched successfully'))
+})
+
 module.exports= {
                     createProblem,
                     updateProblem,
                     deleteProblem,
                     fetchProblem,
                     fetchAllProblem,
-                    solvedProblem
+                    solvedProblem,
+                    getSubmissions
                 }

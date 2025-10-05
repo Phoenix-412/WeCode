@@ -6,6 +6,7 @@ const validate= require('../utils/validate')
 const bcrypt= require('bcrypt')
 const jwt= require('jsonwebtoken')
 const redisClient = require('../db/redis')
+const Submission= require('../models/submission.model')
 
 const generateAccessToken= (userId, email, role)=>{
     const accessToken= jwt.sign(
@@ -162,9 +163,26 @@ const adminRegister= asyncHandler(async (req, res)=>{
        .json(new apiResponse(201, createdAdmin, 'Admin registered successfully'))
 })
 
+const deleteProfile= asyncHandler(async (req, res)=>{
+
+    const userId= req.user._id
+
+    const deletedUser= await User.findByIdAndDelete(userId)
+    if (!deletedUser)
+    {
+        throw new apiError(404, "User not found")
+    }
+
+    await Submission.deleteMany({userId})
+
+    return res.status(200)
+              .json(new apiResponse(200, 'Deleted successfully'))
+})
+
 module.exports= {
                     register,
                     login,
                     logout,
                     adminRegister,
+                    deleteProfile,
                 }
